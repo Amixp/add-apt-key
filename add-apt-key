@@ -1,0 +1,17 @@
+#!/bin/bash
+
+if [ $# -ne 1 ]; then
+        echo "Usage: $0 <key>"
+        exit 1
+fi
+
+gpg --keyserver keyserver.ubuntu.com --recv $1
+if [ $? -ne 0 ]; then
+        gpg --keyserver keys.gnupg.net --recv $1
+        if [ $? -ne 0 ]; then
+                gpg --keyserver keyring.debian.org --recv $1
+        fi
+fi
+
+gpg --export --armor $1 | apt-key add -
+apt-get update
